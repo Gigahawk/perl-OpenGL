@@ -7,6 +7,9 @@
  This program is free software; you can redistribute it and/or
  modify it under the same terms as Perl itself. 
 
+ > Note: This repo contains config files generated on a Thinkpad x200 and therefore will only support OpenGL features supported by this laptop.
+ > Please make a pull request if you have a more modern computer to allow for more features
+
 
 Perl OpenGL: a.k.a. POGL
 
