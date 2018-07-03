@@ -6,7 +6,7 @@
 #
 #       ANY CHANGES MADE HERE WILL BE LOST!
 #
-#   MakeMaker ARGV: ()
+#   MakeMaker ARGV: (q[verbose])
 #
 
 #   MakeMaker Parameters:
@@ -289,7 +289,7 @@ XSUBPP = "$(XSUBPPDIR)$(DFSEP)xsubpp"
 XSUBPPRUN = $(PERLRUN) $(XSUBPP)
 XSPROTOARG = -noprototypes
 XSUBPPDEPS = /usr/share/perl5/core_perl/ExtUtils/typemap typemap /usr/share/perl5/core_perl/ExtUtils$(DFSEP)xsubpp
-XSUBPPARGS = -typemap '/usr/share/perl5/core_perl/ExtUtils/typemap' -typemap '/home/jasper/repos/pogl/typemap'
+XSUBPPARGS = -typemap '/usr/share/perl5/core_perl/ExtUtils/typemap' -typemap '/builddir/perl-OpenGL-0.70/typemap'
 XSUBPP_EXTRA_ARGS =
 
 
@@ -613,6 +613,7 @@ clean_subdirs :
 
 
 # --- MakeMaker clean section:
+# FILES, Config.pm utils/glversion.txt utils/glversion utils/glversion.o
 
 # Delete temporary files but do not touch installed files. We don't delete
 # the Makefile here so a later make realclean still has a makefile to use.
@@ -887,7 +888,7 @@ distdir : create_distdir distmeta
 
 # --- MakeMaker dist_test section:
 disttest : distdir
-	cd $(DISTVNAME) && $(ABSPERLRUN) Makefile.PL 
+	cd $(DISTVNAME) && $(ABSPERLRUN) Makefile.PL "verbose"
 	cd $(DISTVNAME) && $(MAKE) $(PASTHRU)
 	cd $(DISTVNAME) && $(MAKE) test $(PASTHRU)
 
@@ -1134,7 +1135,7 @@ $(FIRST_MAKEFILE) : Makefile.PL $(CONFIGDEP)
 	-$(NOECHO) $(RM_F) $(MAKEFILE_OLD)
 	-$(NOECHO) $(MV)   $(FIRST_MAKEFILE) $(MAKEFILE_OLD)
 	- $(MAKE) $(USEMAKEFILE) $(MAKEFILE_OLD) clean $(DEV_NULL)
-	$(PERLRUN) Makefile.PL 
+	$(PERLRUN) Makefile.PL "verbose"
 	$(NOECHO) $(ECHO) "==> Your Makefile has been rebuilt. <=="
 	$(NOECHO) $(ECHO) "==> Please rerun the $(MAKE) command.  <=="
 	$(FALSE)
@@ -1156,7 +1157,8 @@ $(MAKE_APERL_FILE) : static $(FIRST_MAKEFILE) pm_to_blib
 	$(NOECHO) $(PERLRUNINST) \
 		Makefile.PL DIR="" \
 		MAKEFILE=$(MAKE_APERL_FILE) LINKTYPE=static \
-		MAKEAPERL=1 NORECURS=1 CCCDLFLAGS=
+		MAKEAPERL=1 NORECURS=1 CCCDLFLAGS= \
+		verbose
 
 
 # --- MakeMaker test section:
@@ -1188,11 +1190,11 @@ testdb_dynamic :: dynamic pure_all
 subdirs-test_static :: static pure_all
 
 test_static :: subdirs-test_static $(MAP_TARGET)
-	PERL_DL_NONLAZY=1 "/home/jasper/repos/pogl/$(MAP_TARGET)" $(MAP_PERLINC) "-I$(INST_LIB)" "-I$(INST_ARCHLIB)" $(TEST_FILE)
-	PERL_DL_NONLAZY=1 "/home/jasper/repos/pogl/$(MAP_TARGET)" $(MAP_PERLINC) "-MExtUtils::Command::MM" "-MTest::Harness" "-e" "undef *Test::Harness::Switches; test_harness($(TEST_VERBOSE), '$(INST_LIB)', '$(INST_ARCHLIB)')" $(TEST_FILES)
+	PERL_DL_NONLAZY=1 "/builddir/perl-OpenGL-0.70/$(MAP_TARGET)" $(MAP_PERLINC) "-I$(INST_LIB)" "-I$(INST_ARCHLIB)" $(TEST_FILE)
+	PERL_DL_NONLAZY=1 "/builddir/perl-OpenGL-0.70/$(MAP_TARGET)" $(MAP_PERLINC) "-MExtUtils::Command::MM" "-MTest::Harness" "-e" "undef *Test::Harness::Switches; test_harness($(TEST_VERBOSE), '$(INST_LIB)', '$(INST_ARCHLIB)')" $(TEST_FILES)
 
 testdb_static :: static pure_all $(MAP_TARGET)
-	PERL_DL_NONLAZY=1 "/home/jasper/repos/pogl/$(MAP_TARGET)" $(MAP_PERLINC) "-I$(INST_LIB)" "-I$(INST_ARCHLIB)" $(TEST_FILE)
+	PERL_DL_NONLAZY=1 "/builddir/perl-OpenGL-0.70/$(MAP_TARGET)" $(MAP_PERLINC) "-I$(INST_LIB)" "-I$(INST_ARCHLIB)" $(TEST_FILE)
 
 
 
@@ -1223,6 +1225,229 @@ pm_to_blib : $(FIRST_MAKEFILE) $(TO_INST_PM)
 
 
 # --- MakeMaker selfdocument section:
+
+# Full list of MakeMaker attribute values:
+# ABSPERL => q[$(PERL)]
+# ABSPERLRUN => q[$(ABSPERL)]
+# ABSPERLRUNINST => q[$(ABSPERLRUN) "-I$(INST_ARCHLIB)" "-I$(INST_LIB)"]
+# AR => q[ar]
+# ARGS => { AUTHOR=>[q[Chris Marshall <chm at cpan dot org>]], DEFINE=>q[-DHAVE_VER -DGL_VERSION_USED=2.1 -DHAVE_FREEGLUT -DHAVE_GL -DHAVE_GLU -DHAVE_GLUT -DHAVE_GLX -DHAVE_FREEGLUT -DHAVE_FREEGLUT_H -DGL_GLEXT_LEGACY], EXE_FILES=>[], INC=>q[-I/usr/include -I/usr/include -I/usr/local/include], LDFROM=>q[$(OBJECT) ], LIBS=>q[-L/usr/lib -L/usr/local/lib -lGL -lGLU -lglut -lglut -lXext -lXmu -lXi -lICE -lX11 -lstdc++ -lm], META_MERGE=>{ abstract=>q[Perl bindings to the OpenGL API, GLU, and GLUT/FreeGLUT], resources=>{ bugtracker=>q[http://sourceforge.net/tracker/?group_id=562483&atid=2281758], homepage=>q[http://sourceforge.net/projects/pogl/], repository=>q[git://pogl.git.sourceforge.net/gitroot/pogl/pogl] } }, NAME=>q[OpenGL], OBJECT=>q[$(BASEEXT)$(OBJ_EXT) gl_util$(OBJ_EXT) pogl_const$(OBJ_EXT) pogl_gl_top$(OBJ_EXT) pogl_glu$(OBJ_EXT) pogl_rpn$(OBJ_EXT) pogl_matrix$(OBJ_EXT) pogl_glut$(OBJ_EXT) pogl_gl_Accu_GetM$(OBJ_EXT) pogl_gl_GetP_Pass$(OBJ_EXT) pogl_gl_Mult_Prog$(OBJ_EXT) pogl_gl_Pixe_Ver2$(OBJ_EXT) pogl_gl_Prog_Clam$(OBJ_EXT) pogl_gl_Tex2_Draw$(OBJ_EXT) pogl_gl_Ver3_Tex1$(OBJ_EXT) pogl_gl_Vert_Multi$(OBJ_EXT)], OPTIMIZE=>undef, PM=>{ Array.pod=>q[$(INST_LIBDIR)/OpenGL/Array.pod], Config.pm=>q[$(INST_LIBDIR)/OpenGL/Config.pm], OpenGL.pm=>q[$(INST_LIBDIR)/OpenGL.pm], OpenGL.pod=>q[$(INST_LIBDIR)/OpenGL.pod], Tessellation.pod=>q[$(INST_LIBDIR)/OpenGL/Tessellation.pod] }, PREREQ_PM=>{ Test::More=>q[0] }, VERSION_FROM=>q[OpenGL.pm], XSPROTOARG=>q[-noprototypes], clean=>{ FILES=>q[Config.pm utils/glversion.txt utils/glversion utils/glversion.o] }, dynamic_lib=>{  } }
+# AR_STATIC_ARGS => q[cr]
+# AUTHOR => [q[Chris Marshall <chm at cpan dot org>]]
+# BASEEXT => q[OpenGL]
+# BOOTDEP => q[]
+# BSLOADLIBS => q[]
+# BUILD_REQUIRES => {  }
+# C => [q[EL-ELI.c], q[OpenGL.c], q[gl_util.c], q[pgopogl.c], q[pogl_const.c], q[pogl_gl_Accu_GetM.c], q[pogl_gl_GetP_Pass.c], q[pogl_gl_Mult_Prog.c], q[pogl_gl_Pixe_Ver2.c], q[pogl_gl_Prog_Clam.c], q[pogl_gl_Tex2_Draw.c], q[pogl_gl_Ver3_Tex1.c], q[pogl_gl_Vert_Multi.c], q[pogl_gl_top.c], q[pogl_glu.c], q[pogl_glut.c], q[pogl_matrix.c], q[pogl_rpn.c]]
+# CC => q[cc]
+# CCCDLFLAGS => q[-fPIC]
+# CCDLFLAGS => q[-Wl,-E]
+# CCFLAGS => q[-D_FORTIFY_SOURCE=2 -mtune=generic -O2 -pipe -g]
+# CFLAGS => q[ CCFLAGS = -D_FORTIFY_SOURCE=2 -mtune=generic -O2 -pipe -g OPTIMIZE = -Wall -D_FORTIFY_SOURCE=2 -mtune=generic -O2 -pipe -g PERLTYPE =  MPOLLUTE =  ]
+# CHMOD => q[chmod]
+# CI => q[ci -u]
+# COMPRESS => q[gzip --best]
+# CONFIG => [q[ar], q[cc], q[cccdlflags], q[ccdlflags], q[dlext], q[dlsrc], q[exe_ext], q[full_ar], q[ld], q[lddlflags], q[ldflags], q[libc], q[lib_ext], q[obj_ext], q[osname], q[osvers], q[ranlib], q[sitelibexp], q[sitearchexp], q[so], q[vendorarchexp], q[vendorlibexp]]
+# CONFIGURE_REQUIRES => {  }
+# CONST_CCCMD => q[CCCMD = $(CC) -c $(PASTHRU_INC) $(INC) \ 	$(CCFLAGS) $(OPTIMIZE) \ 	$(PERLTYPE) $(MPOLLUTE) $(DEFINE_VERSION) \ 	$(XS_DEFINE_VERSION)]
+# CP => q[cp]
+# CP_NONEMPTY => q[$(ABSPERLRUN) -MExtUtils::Command::MM -e 'cp_nonempty' --]
+# DEFINE => q[-DHAVE_VER -DGL_VERSION_USED=2.1 -DHAVE_FREEGLUT -DHAVE_GL -DHAVE_GLU -DHAVE_GLUT -DHAVE_GLX -DHAVE_FREEGLUT -DHAVE_FREEGLUT_H -DGL_GLEXT_LEGACY]
+# DEFINE_VERSION => q[-D$(VERSION_MACRO)=\"$(VERSION)\"]
+# DESTDIR => q[]
+# DESTINSTALLARCHLIB => q[$(DESTDIR)$(INSTALLARCHLIB)]
+# DESTINSTALLBIN => q[$(DESTDIR)$(INSTALLBIN)]
+# DESTINSTALLMAN1DIR => q[$(DESTDIR)$(INSTALLMAN1DIR)]
+# DESTINSTALLMAN3DIR => q[$(DESTDIR)$(INSTALLMAN3DIR)]
+# DESTINSTALLPRIVLIB => q[$(DESTDIR)$(INSTALLPRIVLIB)]
+# DESTINSTALLSCRIPT => q[$(DESTDIR)$(INSTALLSCRIPT)]
+# DESTINSTALLSITEARCH => q[$(DESTDIR)$(INSTALLSITEARCH)]
+# DESTINSTALLSITEBIN => q[$(DESTDIR)$(INSTALLSITEBIN)]
+# DESTINSTALLSITELIB => q[$(DESTDIR)$(INSTALLSITELIB)]
+# DESTINSTALLSITEMAN1DIR => q[$(DESTDIR)$(INSTALLSITEMAN1DIR)]
+# DESTINSTALLSITEMAN3DIR => q[$(DESTDIR)$(INSTALLSITEMAN3DIR)]
+# DESTINSTALLSITESCRIPT => q[$(DESTDIR)$(INSTALLSITESCRIPT)]
+# DESTINSTALLVENDORARCH => q[$(DESTDIR)$(INSTALLVENDORARCH)]
+# DESTINSTALLVENDORBIN => q[$(DESTDIR)$(INSTALLVENDORBIN)]
+# DESTINSTALLVENDORLIB => q[$(DESTDIR)$(INSTALLVENDORLIB)]
+# DESTINSTALLVENDORMAN1DIR => q[$(DESTDIR)$(INSTALLVENDORMAN1DIR)]
+# DESTINSTALLVENDORMAN3DIR => q[$(DESTDIR)$(INSTALLVENDORMAN3DIR)]
+# DESTINSTALLVENDORSCRIPT => q[$(DESTDIR)$(INSTALLVENDORSCRIPT)]
+# DEV_NULL => q[> /dev/null 2>&1]
+# DFSEP => q[$(DIRFILESEP)]
+# DIR => []
+# DIRFILESEP => q[/]
+# DISTNAME => q[OpenGL]
+# DISTVNAME => q[OpenGL-0.70]
+# DIST_CP => q[best]
+# DIST_DEFAULT => q[tardist]
+# DLBASE => q[$(BASEEXT)]
+# DLEXT => q[so]
+# DLSRC => q[dl_dlopen.xs]
+# DOC_INSTALL => q[$(ABSPERLRUN) -MExtUtils::Command::MM -e 'perllocal_install' --]
+# ECHO => q[echo]
+# ECHO_N => q[echo -n]
+# EQUALIZE_TIMESTAMP => q[$(ABSPERLRUN) -MExtUtils::Command -e 'eqtime' --]
+# EXE_EXT => q[]
+# EXE_FILES => []
+# EXPORT_LIST => q[]
+# EXTRALIBS => q[-L/usr/lib -L/usr/local/lib -lGL -lGLU -lglut -lglut -lXext -lXmu -lXi -lICE -lX11 -lstdc++]
+# FALSE => q[false]
+# FIRST_MAKEFILE => q[Makefile]
+# FIXIN => q[$(ABSPERLRUN) -MExtUtils::MY -e 'MY->fixin(shift)' --]
+# FULLEXT => q[OpenGL]
+# FULLPERL => q["/usr/bin/perl"]
+# FULLPERLRUN => q[$(FULLPERL)]
+# FULLPERLRUNINST => q[$(FULLPERLRUN) "-I$(INST_ARCHLIB)" "-I$(INST_LIB)"]
+# FULL_AR => q[ar]
+# H => [q[gl_const.h], q[gl_exclude.h], q[gl_util.h], q[glext_consts.h], q[glext_procs.h], q[glext_types.h], q[glu_const.h], q[glu_util.h], q[glut_const.h], q[glut_util.h], q[glx_const.h], q[glx_util.h], q[os2pm_X.h], q[pgopogl.h], q[ppport.h]]
+# HAS_LINK_CODE => q[1]
+# INC => q[-I/usr/include -I/usr/include -I/usr/local/include]
+# INSTALLARCHLIB => q[/usr/lib/perl5/core_perl]
+# INSTALLBIN => q[/usr/bin]
+# INSTALLDIRS => q[site]
+# INSTALLMAN1DIR => q[/usr/share/man/man1]
+# INSTALLMAN3DIR => q[/usr/share/man/man3]
+# INSTALLPRIVLIB => q[/usr/share/perl5/core_perl]
+# INSTALLSCRIPT => q[/usr/bin]
+# INSTALLSITEARCH => q[/usr/lib/perl5/site_perl]
+# INSTALLSITEBIN => q[/usr/bin]
+# INSTALLSITELIB => q[/usr/share/perl5/site_perl]
+# INSTALLSITEMAN1DIR => q[/usr/share/man/man1]
+# INSTALLSITEMAN3DIR => q[/usr/share/man/man3]
+# INSTALLSITESCRIPT => q[/usr/bin]
+# INSTALLVENDORARCH => q[/usr/lib/perl5/vendor_perl]
+# INSTALLVENDORBIN => q[/usr/bin]
+# INSTALLVENDORLIB => q[/usr/share/perl5/vendor_perl]
+# INSTALLVENDORMAN1DIR => q[/usr/share/man/man1]
+# INSTALLVENDORMAN3DIR => q[/usr/share/man/man3]
+# INSTALLVENDORSCRIPT => q[/usr/bin]
+# INST_ARCHAUTODIR => q[$(INST_ARCHLIB)/auto/$(FULLEXT)]
+# INST_ARCHLIB => q[blib/arch]
+# INST_ARCHLIBDIR => q[$(INST_ARCHLIB)]
+# INST_AUTODIR => q[$(INST_LIB)/auto/$(FULLEXT)]
+# INST_BIN => q[blib/bin]
+# INST_BOOT => q[$(INST_ARCHAUTODIR)/$(BASEEXT).bs]
+# INST_DYNAMIC => q[$(INST_ARCHAUTODIR)/$(DLBASE).$(DLEXT)]
+# INST_LIB => q[blib/lib]
+# INST_LIBDIR => q[$(INST_LIB)]
+# INST_MAN1DIR => q[blib/man1]
+# INST_MAN3DIR => q[blib/man3]
+# INST_SCRIPT => q[blib/script]
+# INST_STATIC => q[$(INST_ARCHAUTODIR)/$(BASEEXT)$(LIB_EXT)]
+# LD => q[cc]
+# LDDLFLAGS => q[-shared -Wl,-z,relro -Wl,-z,now -Wl,--as-needed     -pthread]
+# LDFLAGS => q[-Wl,-z,relro -Wl,-z,now -Wl,--as-needed     -pthread]
+# LDFROM => q[$(OBJECT) ]
+# LDLOADLIBS => q[-L/usr/lib -L/usr/local/lib -lGL -lGLU -lglut -lglut -lXext -lXmu -lXi -lICE -lX11 -lstdc++ -lm]
+# LD_RUN_PATH => q[/usr/lib]
+# LIBC => q[]
+# LIBPERL_A => q[libperl.a]
+# LIBS => [q[-L/usr/lib -L/usr/local/lib -lGL -lGLU -lglut -lglut -lXext -lXmu -lXi -lICE -lX11 -lstdc++ -lm]]
+# LIB_EXT => q[.a]
+# LINKTYPE => q[dynamic]
+# MACROEND => q[]
+# MACROSTART => q[]
+# MAKE => q[make]
+# MAKEFILE => q[Makefile]
+# MAKEFILE_OLD => q[Makefile.old]
+# MAKEMAKER => q[/usr/lib/perl5/core_perl/ExtUtils/MakeMaker.pm]
+# MAKE_APERL_FILE => q[Makefile.aperl]
+# MAN1EXT => q[1p]
+# MAN1PODS => {  }
+# MAN3EXT => q[3p]
+# MAN3PODS => { Array.pod=>q[$(INST_MAN3DIR)/Array.$(MAN3EXT)], OpenGL.pod=>q[$(INST_MAN3DIR)/OpenGL.$(MAN3EXT)], Tessellation.pod=>q[$(INST_MAN3DIR)/Tessellation.$(MAN3EXT)] }
+# MAP_TARGET => q[perl]
+# META_MERGE => { abstract=>q[Perl bindings to the OpenGL API, GLU, and GLUT/FreeGLUT], resources=>{ bugtracker=>q[http://sourceforge.net/tracker/?group_id=562483&atid=2281758], homepage=>q[http://sourceforge.net/projects/pogl/], repository=>q[git://pogl.git.sourceforge.net/gitroot/pogl/pogl] } }
+# MKPATH => q[$(ABSPERLRUN) -MExtUtils::Command -e 'mkpath' --]
+# MM_REVISION => q[72400]
+# MM_Unix_VERSION => q[7.24]
+# MM_VERSION => q[7.24]
+# MOD_INSTALL => q[$(ABSPERLRUN) -MExtUtils::Install -e 'install([ from_to => {@ARGV}, verbose => '\''$(VERBINST)'\'', uninstall_shadows => '\''$(UNINST)'\'', dir_mode => '\''$(PERM_DIR)'\'' ]);' --]
+# MV => q[mv]
+# NAME => q[OpenGL]
+# NAME_SYM => q[OpenGL]
+# NEEDS_LINKING => q[1]
+# NOECHO => q[@]
+# NOOP => q[$(TRUE)]
+# OBJECT => q[$(BASEEXT)$(OBJ_EXT) gl_util$(OBJ_EXT) pogl_const$(OBJ_EXT) pogl_gl_top$(OBJ_EXT) pogl_glu$(OBJ_EXT) pogl_rpn$(OBJ_EXT) pogl_matrix$(OBJ_EXT) pogl_glut$(OBJ_EXT) pogl_gl_Accu_GetM$(OBJ_EXT) pogl_gl_GetP_Pass$(OBJ_EXT) pogl_gl_Mult_Prog$(OBJ_EXT) pogl_gl_Pixe_Ver2$(OBJ_EXT) pogl_gl_Prog_Clam$(OBJ_EXT) pogl_gl_Tex2_Draw$(OBJ_EXT) pogl_gl_Ver3_Tex1$(OBJ_EXT) pogl_gl_Vert_Multi$(OBJ_EXT)]
+# OBJ_EXT => q[.o]
+# OPTIMIZE => q[-Wall -D_FORTIFY_SOURCE=2 -mtune=generic -O2 -pipe -g]
+# OSNAME => q[linux]
+# OSVERS => q[current]
+# O_FILES => [q[EL-ELI.o], q[OpenGL.o], q[gl_util.o], q[pgopogl.o], q[pogl_const.o], q[pogl_gl_Accu_GetM.o], q[pogl_gl_GetP_Pass.o], q[pogl_gl_Mult_Prog.o], q[pogl_gl_Pixe_Ver2.o], q[pogl_gl_Prog_Clam.o], q[pogl_gl_Tex2_Draw.o], q[pogl_gl_Ver3_Tex1.o], q[pogl_gl_Vert_Multi.o], q[pogl_gl_top.o], q[pogl_glu.o], q[pogl_glut.o], q[pogl_matrix.o], q[pogl_rpn.o]]
+# PARENT_NAME => q[]
+# PERL => q["/usr/bin/perl"]
+# PERLMAINCC => q[$(CC)]
+# PERLPREFIX => q[/usr]
+# PERLRUN => q[$(PERL)]
+# PERLRUNINST => q[$(PERLRUN) "-I$(INST_ARCHLIB)" "-I$(INST_LIB)"]
+# PERLTYPE => q[]
+# PERL_ARCHIVE => q[]
+# PERL_ARCHIVEDEP => q[]
+# PERL_ARCHIVE_AFTER => q[]
+# PERL_ARCHLIB => q[/usr/lib/perl5/core_perl]
+# PERL_ARCHLIBDEP => q[/usr/lib/perl5/core_perl]
+# PERL_CORE => q[0]
+# PERL_INC => q[/usr/lib/perl5/core_perl/CORE]
+# PERL_INCDEP => q[/usr/lib/perl5/core_perl/CORE]
+# PERL_LIB => q[/usr/share/perl5/core_perl]
+# PERL_MALLOC_DEF => q[-DPERL_EXTMALLOC_DEF -Dmalloc=Perl_malloc -Dfree=Perl_mfree -Drealloc=Perl_realloc -Dcalloc=Perl_calloc]
+# PERL_SRC => undef
+# PERM_DIR => q[755]
+# PERM_RW => q[644]
+# PERM_RWX => q[755]
+# PL_FILES => {  }
+# PM => { Array.pod=>q[$(INST_LIBDIR)/OpenGL/Array.pod], Config.pm=>q[$(INST_LIBDIR)/OpenGL/Config.pm], OpenGL.pm=>q[$(INST_LIBDIR)/OpenGL.pm], OpenGL.pod=>q[$(INST_LIBDIR)/OpenGL.pod], Tessellation.pod=>q[$(INST_LIBDIR)/OpenGL/Tessellation.pod] }
+# PMLIBDIRS => []
+# PMLIBPARENTDIRS => [q[lib]]
+# POSTOP => q[$(NOECHO) $(NOOP)]
+# PREFIX => q[$(SITEPREFIX)]
+# PREOP => q[$(NOECHO) $(NOOP)]
+# PREREQ_PM => { Test::More=>q[0] }
+# RANLIB => q[ranlib]
+# RCS_LABEL => q[rcs -Nv$(VERSION_SYM): -q]
+# RM_F => q[rm -f]
+# RM_RF => q[rm -rf]
+# SHAR => q[shar]
+# SHELL => q[/bin/sh]
+# SITEARCHEXP => q[/usr/lib/perl5/site_perl]
+# SITELIBEXP => q[/usr/share/perl5/site_perl]
+# SITEPREFIX => q[/usr]
+# SKIPHASH => {  }
+# SO => q[so]
+# SUFFIX => q[.gz]
+# TAR => q[tar]
+# TARFLAGS => q[cvf]
+# TEST_F => q[test -f]
+# TEST_REQUIRES => {  }
+# TEST_S => q[test -s]
+# TOUCH => q[touch]
+# TO_UNIX => q[$(NOECHO) $(NOOP)]
+# TRUE => q[true]
+# UMASK_NULL => q[umask 0]
+# UNINST => q[0]
+# UNINSTALL => q[$(ABSPERLRUN) -MExtUtils::Command::MM -e 'uninstall' --]
+# USEMAKEFILE => q[-f]
+# VENDORARCHEXP => q[/usr/lib/perl5/vendor_perl]
+# VENDORLIBEXP => q[/usr/share/perl5/vendor_perl]
+# VENDORPREFIX => q[/usr]
+# VERBINST => q[0]
+# VERSION => q[0.70]
+# VERSION_FROM => q[OpenGL.pm]
+# VERSION_MACRO => q[VERSION]
+# VERSION_SYM => q[0_70]
+# WARN_IF_OLD_PACKLIST => q[$(ABSPERLRUN) -MExtUtils::Command::MM -e 'warn_if_old_packlist' --]
+# XS => { OpenGL.xs=>q[OpenGL.c], pgopogl.xs=>q[pgopogl.c], pogl_const.xs=>q[pogl_const.c], pogl_gl_Accu_GetM.xs=>q[pogl_gl_Accu_GetM.c], pogl_gl_GetP_Pass.xs=>q[pogl_gl_GetP_Pass.c], pogl_gl_Mult_Prog.xs=>q[pogl_gl_Mult_Prog.c], pogl_gl_Pixe_Ver2.xs=>q[pogl_gl_Pixe_Ver2.c], pogl_gl_Prog_Clam.xs=>q[pogl_gl_Prog_Clam.c], pogl_gl_Tex2_Draw.xs=>q[pogl_gl_Tex2_Draw.c], pogl_gl_Ver3_Tex1.xs=>q[pogl_gl_Ver3_Tex1.c], pogl_gl_Vert_Multi.xs=>q[pogl_gl_Vert_Multi.c], pogl_gl_top.xs=>q[pogl_gl_top.c], pogl_glu.xs=>q[pogl_glu.c], pogl_glut.xs=>q[pogl_glut.c], pogl_matrix.xs=>q[pogl_matrix.c], pogl_rpn.xs=>q[pogl_rpn.c] }
+# XSPROTOARG => q[-noprototypes]
+# XS_DEFINE_VERSION => q[-D$(XS_VERSION_MACRO)=\"$(XS_VERSION)\"]
+# XS_VERSION => q[0.70]
+# XS_VERSION_MACRO => q[XS_VERSION]
+# ZIP => q[zip]
+# ZIPFLAGS => q[-r]
+# _MAX_EXEC_LEN => q[4096]
+# clean => { FILES=>q[Config.pm utils/glversion.txt utils/glversion utils/glversion.o] }
+# dynamic_lib => {  }
 
 # here so even if top_targets is overridden, these will still be defined
 # gmake will silently still work if any are .PHONY-ed but nmake won't
