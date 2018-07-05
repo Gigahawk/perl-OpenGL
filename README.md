@@ -7,6 +7,8 @@
  This program is free software; you can redistribute it and/or
  modify it under the same terms as Perl itself. 
 
+ > Note: This repo contains pre-generated config files generated with dist=NO_EXCLUSIONS and modified to work with xbps-src
+
 
 Perl OpenGL: a.k.a. POGL
 
