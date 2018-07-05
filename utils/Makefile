@@ -21,7 +21,8 @@ EXTRALIBS=-lGLU -lXi -lXmu -lXext -lX11 -lm
 all: glversion.txt
 
 glversion.txt: glversion
-	./glversion > glversion.txt
+	#./glversion > glversion.txt
+	touch glversion.txt
 
 glversion: glversion.o
 	${LINK} glversion.o ${LDFLAGS} ${EXTRALIBS} -o glversion
